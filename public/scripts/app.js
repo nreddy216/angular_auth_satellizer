@@ -158,11 +158,16 @@ function SignupController () {
   };
 }
 
-LogoutController.$inject = ["Account"]; // minification protection
-function LogoutController (Account) {
-  Account.logout()
+LogoutController.$inject = ["Account", "$location"]; // minification protection
+function LogoutController (Account, $location) {
+  Account
+    .logout()
+    .then(function(){
+      $location.path('/login');
+    })
 
   // TODO #7: when the logout succeeds, redirect to the login page
+
 }
 
 
@@ -238,6 +243,7 @@ function Account($http, $q, $auth) {
       $auth
         .logout()
         .then(function(){
+          $auth.removeToken();
           self.user = null;
         })
     )

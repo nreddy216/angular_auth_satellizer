@@ -6,6 +6,7 @@ var userSchema = new Schema({
   created: { type: Date },
   updated: { type: Date },
   email: { type: String, unique: true, lowercase: true },
+  username: String,
   password: { type: String, select: false },
   displayName: String,
   // TODO #12

@@ -173,14 +173,21 @@ function LogoutController (Account, $location) {
 }
 
 
-ProfileController.$inject = []; // minification protection
-function ProfileController () {
+ProfileController.$inject = ['Account']; // minification protection
+function ProfileController (Account) {
   var vm = this;
   vm.new_profile = {}; // form data
 
   vm.updateProfile = function() {
+    Account
+      .updateProfile(vm.new_profile)
+      .then(function(){
+        vm.new_profile = {};
+
+      })
     // TODO #14: Submit the form using the relevant `Account` method
     // On success, clear the form
+
   };
 }
 

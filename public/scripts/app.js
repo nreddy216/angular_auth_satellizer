@@ -141,8 +141,8 @@ function LoginController (Account, $location) {
   };
 }
 
-SignupController.$inject = []; // minification protection
-function SignupController () {
+SignupController.$inject = ['Account', '$location']; // minification protection
+function SignupController (Account, $location) {
   var vm = this;
   vm.new_user = {}; // form data
 
@@ -152,7 +152,9 @@ function SignupController () {
       .then(
         function (response) {
           // TODO #9: clear sign up form
+          vm.new_user = {};
           // TODO #10: redirect to '/profile'
+          $location.path('/profile');
         }
       );
   };
@@ -198,20 +200,28 @@ function Account($http, $q, $auth) {
   self.getProfile = getProfile;
   self.updateProfile = updateProfile;
 
+  self.userData = {
+
+  }
+
   function signup(userData) {
     // TODO #8: signup (https://github.com/sahat/satellizer#authsignupuser-options)
-    $auth.signup(user)
-    .then(function(response) {
-      // Redirect user here to login page or perhaps some other intermediate page
+    return (
+      $auth
+        .signup(userData)
+        .then(function(response) {
+        // Redirect user here to login page or perhaps some other intermediate page
       // that requires email address verification before any other part of the site
       // can be accessed.
-      $auth.setToken(response.token);
-      })
+
+          $auth.setToken(response.data.token);
+        })
       .catch(function(response) {
         console.log("handling errors?", response);
-      });
+        })
     // then, set the token (https://github.com/sahat/satellizer#authsettokentoken)
     // returns a promise
+      );
     }
 
   function login(userData) {

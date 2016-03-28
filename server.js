@@ -113,6 +113,6 @@ app.get(['/', '/signup', '/login', '/profile'], function (req, res) {
 /*
  * Listen on localhost:3000
  */
-app.listen(9000, function() {
+app.listen(3000, function() {
   console.log('server started');
 });

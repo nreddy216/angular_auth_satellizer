@@ -4,7 +4,9 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     hbs = require('hbs'),
     mongoose = require('mongoose'),
-    auth = require('./resources/auth');
+    auth = require('./resources/auth'),
+    User = require('./models/user'),
+    Post = require('./models/post');
 
 // require and load dotenv
 require('dotenv').load();
@@ -49,19 +51,52 @@ app.put('/api/me', auth.ensureAuthenticated, function (req, res) {
   });
 });
 
-app.get('/api/posts', function (req, res) {
-  res.json([
-  {
-    title: "Hardcoded Title",
-    content: "Here is some great hardcoded content for the body of a blog post. Happy coding!"
-  },
-  {
-    title: "Another Post",
-    content: "MEAN stack is the best stack."
-  }
-  ]);
+//testing posts data
+app.get('/api/users', function (req, res) {
+
+  User.find({}, function(err, users){
+    if(err){
+      console.log(err);
+    }
+    res.send(users);
+  });
 });
 
+app.get('/api/me/posts', function (req, res) {
+
+  Post.find({}, function(err, posts){
+    if(err){
+      console.log(err);
+    }
+    res.send(posts);
+  });
+});
+
+
+app.get('/api/posts', function (req, res) {
+
+  Post.find({}, function(err, posts){
+    if(err){
+      console.log(err);
+    }
+    res.send(posts);
+  });
+});
+
+app.post('/api/posts', auth.ensureAuthenticated, function (req, res) {
+  User.findById(req.user, function (err, user) {
+    var newPost = new Post(req.body);
+    newPost.save(function (err, savedPost) {
+      if (err) {
+        res.status(500).json({ error: err.message });
+      } else {
+        user.posts.push(newPost);
+        user.save();
+        res.json(savedPost);
+      }
+    });
+  });
+});
 
 /*
  * Auth Routes

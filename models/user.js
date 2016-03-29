@@ -2,6 +2,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     bcrypt = require('bcryptjs');
 
+
 var userSchema = new Schema({
   created: { type: Date },
   updated: { type: Date },
@@ -10,8 +11,10 @@ var userSchema = new Schema({
   password: { type: String, select: false },
   displayName: String,
   // TODO #12
-  picture: String
+  picture: String,
+  posts: [{type: Schema.Types.ObjectId, ref:'Post'}]
 });
+
 
 userSchema.pre('save', function (next) {
   // set created and updated
@@ -41,4 +44,6 @@ userSchema.methods.comparePassword = function (password, done) {
 };
 
 var User = mongoose.model('User', userSchema);
+
+
 module.exports = User;

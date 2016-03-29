@@ -116,10 +116,19 @@ function HomeController ($http) {
   vm.posts = [];
   vm.new_post = {}; // form data
 
-  $http.get('/api/posts')
+  $http.get('/api/users/posts')
     .then(function (response) {
       vm.posts = response.data;
     });
+
+  vm.createPost = function(){
+    console.log("create post: ", vm.new_post);
+    $http.post('/api/posts', vm.new_post)
+      .then(function (response) {
+        vm.posts.push(response.data);
+        vm.new_post = {};
+      });
+  }
 }
 
 LoginController.$inject = ["Account", "$location"]; // minification protection
@@ -178,12 +187,14 @@ function ProfileController (Account) {
   var vm = this;
   vm.new_profile = {}; // form data
 
+  vm.showEditForm = false;
+
   vm.updateProfile = function() {
     Account
       .updateProfile(vm.new_profile)
       .then(function(){
         vm.new_profile = {};
-
+        vm.showEditForm = false;
       })
     // TODO #14: Submit the form using the relevant `Account` method
     // On success, clear the form
@@ -207,9 +218,6 @@ function Account($http, $q, $auth) {
   self.getProfile = getProfile;
   self.updateProfile = updateProfile;
 
-  self.userData = {
-
-  }
 
   function signup(userData) {
     // TODO #8: signup (https://github.com/sahat/satellizer#authsignupuser-options)
